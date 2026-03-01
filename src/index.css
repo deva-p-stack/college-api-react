@@ -1,0 +1,39 @@
+@import "tailwindcss";
+
+#University {
+  width: 150px;       
+  max-width: 250px;   
+}
+#state{
+
+ width: 120px;       
+  max-width: 250px;
+
+}
+
+dialog::backdrop{
+  @apply bg-black/40;
+  backdrop-filter: blur(4px);
+}
+
+#district{
+
+ width: 140px;       
+  max-width: 250px;
+
+}
+
+#institution{
+
+ width: 150px;       
+  max-width: 250px;
+
+}
+
+#programme{
+ width: 160px;       
+  max-width: 250px;
+
+}
+
+
