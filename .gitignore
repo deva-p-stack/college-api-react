@@ -11,6 +11,10 @@ node_modules
 dist
 dist-ssr
 *.local
+/src/summa
+/src/summa-2
+/src/summa-3
+/src/summa-4
 
 # Editor directories and files
 .vscode/*
