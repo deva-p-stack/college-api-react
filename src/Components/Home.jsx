@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import UseFetchApi from "../summa/CustomHook/UseFetchApi";
+
 import SelectOption from "./SelectOption";
 import FilterDiv from "./FilterDiv";
 import CollegeCard from "./CollegeCard";
