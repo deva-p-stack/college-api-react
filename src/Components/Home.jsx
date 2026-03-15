@@ -211,7 +211,7 @@ const Home = () => {
         programme: "All",
         search: "",
       }));
-
+       
        notify("Filtered data has been reset");
     }else{
       notify("Already reset!");
