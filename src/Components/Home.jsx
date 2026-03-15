@@ -1,21 +1,28 @@
 import { useContext, useEffect, useState } from "react";
-import UseFetchApi from "../summa/CustomHook/UseFetchApi";
-import SelectOption from "./SelectOption";
 import FilterDiv from "./FilterDiv";
-import CollegeCard from "./CollegeCard";
 import { SelectionContext } from "./Context/SelectionContext";
+import CollegeGrid from "./CollegeGrid";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const BASE_API_KEY = "https://indian-colleges-list.vercel.app/api";
 
-const Home = ()=> {
+const Home = () => {
   const [allStates, setAllStates] = useState([]);
   const [allColleges, setAllColleges] = useState([]);
   const [filteredColleges, setFilteredColleges] = useState([]);
   const [progress, setProgress] = useState(0);
   const [loading, setLoading] = useState(true);
 
+  //
+  const [stateArr, setStateArr] = useState([]);
+  const [districtArr, setDistrictArr] = useState([]);
+  const [instituteArr, setInstituteArr] = useState([]);
+  const [universityArr, setUniversityArr] = useState([]);
+  // const [programmeArr, setProgrammeArr] = useState([]);
+
   // Filter States
-  const { selections} = useContext(SelectionContext)
+  const { selections, setSelections } = useContext(SelectionContext);
 
   // 1. Initial Load: Get States
   useEffect(() => {
@@ -50,8 +57,15 @@ const Home = ()=> {
 
       const results = await Promise.all(promises);
       const flatData = results.flatMap((item) => item.data || []);
-    
-      setAllColleges(flatData)
+      const sortedData = [...flatData].sort((a, b) => {
+        const nameA = a.institute_name.trim();
+        const nameB = b.institute_name.trim();
+        return nameA.localeCompare(nameB, undefined, {
+          sensitivity: "accent",
+        });
+      });
+
+      setAllColleges(sortedData);
       setLoading(false);
     } catch (error) {
       console.error(error);
@@ -61,22 +75,154 @@ const Home = ()=> {
 
   // 3.filter logic
   useEffect(() => {
-    let result = allColleges;
+    // selection values
+    const hasState = selections.state !== "";
+    const hasDistrict = selections.district !== "All";
+    const hasInstitution = selections.institution !== "All";
+    const hasUniversity = selections.university !== "All";
+    const hasProgramme = selections.programme !== "All";
 
-    if(selections.state){
-      result = result.filter(college => college.state === selections.state);
+    switch (true) {
+      // 1- Programme
+      case hasProgramme: {
+        const source = hasUniversity
+          ? universityArr
+          : hasInstitution
+            ? instituteArr
+            : hasDistrict
+              ? districtArr
+              : stateArr;
+
+        // const filtered = source.filter(
+        //   (c) => c.programme === selections.programme,
+        // );
+
+        const filteredProgrammeArr = source.filter((collage) => {
+          if (selections.programme === "All") {
+            return collage;
+          }
+
+          const hasMatch = collage.programmes.some((programme) => {
+            // console.log("programme: ", programme.programme);
+
+            const isMatch = programme.course === selections.programme;
+            // console.log(isMatch);
+
+            return isMatch;
+          });
+
+          // console.log("This collage had the course? ", hasMatch);
+          // console.log("---------------------------");
+
+          return hasMatch;
+        });
+
+        // setProgrammeArr(filteredProgrammeArr);
+        setFilteredColleges(filteredProgrammeArr);
+        break;
+      }
+
+      // 2- University
+      case hasUniversity: {
+        const source = hasInstitution
+          ? instituteArr
+          : hasDistrict
+            ? districtArr
+            : stateArr;
+
+        const filtered = source.filter((college) => {
+          if (selections.university === "All") {
+            return college;
+          }
+          return college.university === selections.university;
+        });
+        setUniversityArr(filtered);
+        setFilteredColleges(filtered);
+        break;
+      }
+
+      // 3- Institution
+      case hasInstitution: {
+        const source = hasDistrict ? districtArr : stateArr;
+
+        const filtered = source.filter((college) => {
+          if (selections.institution === "All") {
+            return college;
+          }
+          return college.institution_type === selections.institution;
+        });
+        setInstituteArr(filtered);
+        setFilteredColleges(filtered);
+        break;
+      }
+
+      // 4- District
+      case hasDistrict: {
+        const filtered = stateArr.filter((college) => {
+          if (selections.district === "All") {
+            return college;
+          }
+          return college.district === selections.district;
+        });
+        setDistrictArr(filtered);
+        setFilteredColleges(filtered);
+        break;
+      }
+
+      // 5- State (The only one that touches the 13,000+ records)
+      case hasState: {
+        const filtered = allColleges.filter(
+          (c) => c.state === selections.state,
+        );
+        setStateArr(filtered);
+        setFilteredColleges(filtered);
+        break;
+      }
+
+      // Reset to show everything
+      default:
+        setFilteredColleges([]);
+        break;
     }
 
-    console.log(result);
-    
+    console.log(selections);
+  }, [selections, allColleges]);
 
-    setFilteredColleges(result);
-  },[selections, allColleges])
+  // notify
+  const notify = (text) => {
+    toast.success(text);
+  };
 
+  // reset function
+  function resetData() {
+    if (
+      selections.state !== "" ||
+      selections.district !== "All" ||
+      selections.institution !== "All" ||
+      selections.university !== "All" ||
+      selections.programme !== "All"
+    ) {
+      setSelections((prev) => ({
+        ...prev,
+        state: "",
+        district: "All",
+        institution: "All",
+        university: "All",
+        programme: "All",
+        search: "",
+      }));
 
+       notify("Filtered data has been reset");
+    }else{
+      notify("Already reset!");
+    }
+  }
 
   return (
     <>
+      <div className="">
+        <ToastContainer position="top-right" autoClose={3000} />
+      </div>
       <section className="w-full pt-10 flex flex-col items-center min-h-[79vh] bg-[#07111d] p-5">
         <div className="flex flex-wrap gap-4 max-w-6xl w-full bg-[background: rgba(255, 255, 255, 0.22);] bg-white/10 rounded-2xl shadow-lg backdrop-blur-sm border border-white/20  p-5 ">
           <input
@@ -89,15 +235,12 @@ const Home = ()=> {
           />
 
           {/* select filters */}
-          <FilterDiv
-            states={allStates}
-            disabled={loading}
-            allColleges={allColleges}
-          />
+          <FilterDiv allStatesArr={allStates} allColleges={allColleges} loading={loading}/>
 
           {/* clear function */}
           <button
             id="reset-btn"
+            onClick={resetData}
             className="p-3 rounded-lg ring-1 ring-blue-500  cursor-pointer hover:bg-blue-500/10  hover:scale-105 active:scale-95     transition-all duration-200 ease-in-out ">
             <svg
               id="clear"
@@ -114,74 +257,12 @@ const Home = ()=> {
           </button>
         </div>
 
-        {loading ? (
-          <div className="max-w-xl min-h-[52vh] mx-auto mt-20 text-center">
-            <p className="text-sky-400 mb-4 animate-pulse">
-              Getting data from College Databases... {progress}%
-            </p>
-
-            {/* Outer Track */}
-            <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden border border-white/5">
-              {/* Inner Fill */}
-              <div
-                className="h-full bg-linear-to-r from-blue-600 to-sky-400 transition-all duration-300 ease-out"
-                style={{ width: `${progress}%` }}
-              />
-            </div>
-          </div>
-        ) : selections.state === "" ? (
-          <div className=" min-h-[62vh] content-center">
-            <p className="text-white">Now you can search 🔍...</p>
-          </div>
-        ) : (
-          <div
-            id="container"
-            className="transition-all ease-in-out hover:-translate-y-1 duration-300 grid grid-cols-1  md:grid-cols-2 lg:grid-cols-3 gap-6 px-5 max-w-6xl w-full py-8">
-            {/* college list */}
-            {filteredColleges.map((college, id) => (
-              <CollegeCard key={id} college={college} />
-            ))}
-          </div>
-        )}
-
-        {/* filter div */}
-        <div
-          className="px-5 max-w-6xl w-full justify-between text-blue-200 hidden"
-          id="filter-div">
-          {/* fliter status */}
-          <div
-            className="my-6 max-sm:text-sm max-sm:flex-row  "
-            id="filter-status">
-            {/* content */}
-          </div>
-
-          {/* college count */}
-          <div className="flex items-center space-x-1">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="25"
-              height="25"
-              viewBox="0 0 24 24">
-              <path
-                fill="currentColor"
-                d="M11.77 19q-.33 0-.55-.22t-.22-.55v-5.576L5.604 5.83q-.202-.27-.055-.55t.47-.28h11.962q.323 0 .47.28q.147.282-.055.55L13 12.655v5.577q0 .328-.22.549t-.55.22z"
-              />
-            </svg>
-            <span> Colleges:</span>
-            <span id="card-count">100</span>
-          </div>
-        </div>
-
-        {/* search green flag */}
-        {/* <div
-          className="col-span-full justify-items-center mt-5 md:mt-20 hidden"
-          id="search-alert">
-          <div role="status" className="justify-items-center">
-            <p className="text-blue-200 pt-2">
-              Now you can search colleges 🔍...
-            </p>
-          </div>
-        </div> */}
+        <CollegeGrid
+          loading={loading}
+          progress={progress}
+          selections={selections}
+          filteredColleges={filteredColleges}
+        />
 
         {/* course dialog */}
         <dialog
@@ -224,6 +305,6 @@ const Home = ()=> {
       </section>
     </>
   );
-}
+};
 
 export default Home;
