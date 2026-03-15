@@ -1,0 +1,41 @@
+@import "tailwindcss";
+
+#university {
+  width: 150px;       
+  max-width: 250px;   
+}
+#state{
+
+ width: 120px;       
+  max-width: 250px;
+
+}
+
+dialog::backdrop{
+  @apply bg-black/40;
+  backdrop-filter: blur(4px);
+}
+
+#district{
+
+ width: 140px;       
+  max-width: 250px;
+
+}
+
+#institution{
+
+ width: 150px;       
+  max-width: 250px;
+
+}
+
+#programme{
+ width: 160px;       
+  max-width: 250px;
+
+}
+
+select{
+  @apply w-full py-2 pl-4 border text-[#E2E8F0] border-[#2E3A47] rounded-lg outline-none ring-1 ring-sky-500 transition *:text-[#E2E8F0] *:border-[#2E3A47] *:bg-[#202934] 
+}
