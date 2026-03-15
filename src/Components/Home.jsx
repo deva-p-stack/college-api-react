@@ -1,4 +1,6 @@
 import { useContext, useEffect, useState } from "react";
+
+import SelectOption from "./SelectOption";
 import FilterDiv from "./FilterDiv";
 import { SelectionContext } from "./Context/SelectionContext";
 import CollegeGrid from "./CollegeGrid";
