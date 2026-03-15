@@ -41,6 +41,31 @@ const Home = () => {
     getAllStates();
   }, []);
 
+  // search
+  const [searchTerm, setSearchTerm] = useState(selections.search);
+
+  // handle onchange input
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  // Debounce logic
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      setSelections((prev) => ({
+        ...prev,
+        state: "",
+        district: "All",
+        institution: "All",
+        university: "All",
+        programme: "All",
+        search: searchTerm,
+      }));
+    }, 1000);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchTerm, setSelections]);
+
   // 2.all colleges get
   const fetchAllColleges = async (states) => {
     let completed = 0;
@@ -83,6 +108,7 @@ const Home = () => {
     const hasInstitution = selections.institution !== "All";
     const hasUniversity = selections.university !== "All";
     const hasProgramme = selections.programme !== "All";
+    const hasSearch = selections.search.trim() !== "";
 
     switch (true) {
       // 1- Programme
@@ -174,10 +200,26 @@ const Home = () => {
       // 5- State (The only one that touches the 13,000+ records)
       case hasState: {
         const filtered = allColleges.filter(
-          (c) => c.state === selections.state,
+          (collage) => collage.state === selections.state,
         );
         setStateArr(filtered);
         setFilteredColleges(filtered);
+        break;
+      }
+
+      // 6- name
+      case hasSearch: {
+        console.log(selections.search);
+
+        const filtered = allColleges.filter((college) => {
+          // college.institute_name?.toLowerCase().includes(selections.name);
+          const ClgName = college.institute_name.toLowerCase().trim();
+          const inputName = selections.search.toLowerCase().trim();
+          return ClgName.includes(inputName);
+        });
+        setFilteredColleges([...filtered]);
+        // console.log(filteredColleges);
+
         break;
       }
 
@@ -213,9 +255,9 @@ const Home = () => {
         programme: "All",
         search: "",
       }));
-       
-       notify("Filtered data has been reset");
-    }else{
+
+      notify("Filtered data has been reset");
+    } else {
       notify("Already reset!");
     }
   }
@@ -229,15 +271,20 @@ const Home = () => {
         <div className="flex flex-wrap gap-4 max-w-6xl w-full bg-[background: rgba(255, 255, 255, 0.22);] bg-white/10 rounded-2xl shadow-lg backdrop-blur-sm border border-white/20  p-5 ">
           <input
             id="search"
-            className=" py-2 px-3 w-full md:w-[30%] lg:w-[21%] text-[#E2E8F0]  cursor-wait duration-500 transition-all ease-in-out placeholder:text-[#E2E8F0] ring-1 ring-sky-500  outline-none border-[#2E3A47] border rounded-lg"
+            className= {`py-2 px-3 w-full md:w-[30%] lg:w-[21%] text-[#E2E8F0] duration-500 transition-all ease-in-out placeholder:text-[#E2E8F0] ring-1 ring-sky-500  outline-none border-[#2E3A47] border rounded-lg ${loading ? "cursor-wait" : "cursor-text"}`}
             type="search"
             placeholder="Enter the college name"
-            readOnly
-            title="Please wait,we are fetching all indian colleges data... "
+            title={`${loading ? "Please wait,we are fetching all indian colleges data... " : "Now you can search 🔍 colleges by name..."}`}
+            readOnly = {loading && true}
+            onChange={handleSearchChange}
           />
 
           {/* select filters */}
-          <FilterDiv allStatesArr={allStates} allColleges={allColleges} loading={loading}/>
+          <FilterDiv
+            allStatesArr={allStates}
+            allColleges={allColleges}
+            loading={loading}
+          />
 
           {/* clear function */}
           <button
@@ -307,6 +354,6 @@ const Home = () => {
       </section>
     </>
   );
-};
+};;;
 
 export default Home;

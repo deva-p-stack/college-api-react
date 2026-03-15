@@ -1,5 +1,5 @@
-import { useEffect } from "react";
 import CollegeCard from "./CollegeCard";
+import FilterStatus from "./FilterStatus";
 
 // Loading
 function Loading({ progress }) {
@@ -41,16 +41,22 @@ const CollegeGrid = ({ loading, progress, selections, filteredColleges }) => {
           <OuterLayout>
             <Loading progress={progress} />
           </OuterLayout>
-        ) : selections.state === "" ? (
+        ) : selections.state === "" && selections.search === "" ? (
           <OuterLayout>
             <p className="text-white">Now you can search 🔍...</p>
           </OuterLayout>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 py-4">
-            {filteredColleges.map((college, id) => (
-              <CollegeCard key={id} college={college} />
-            ))}
-          </div>
+        ) : (  
+          filteredColleges.length > 0 && (
+            <>
+            {console.log(filteredColleges)}
+              <FilterStatus filteredCollegesCount={filteredColleges.length} />
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 py-4">
+                {filteredColleges.map((college, id) => (
+                  <CollegeCard key={id} college={college} />
+                ))}
+              </div>
+            </>
+          )
         )}
       </div>
     </div>
