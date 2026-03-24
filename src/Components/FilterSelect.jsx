@@ -24,11 +24,22 @@ const FilterSelect = ({
         <option value={id === "state" ? "" : "All"} className="bg-[#07111d]">
           {placeholder}
         </option>
-        {options.map((opt) => (
+        {options.map((opt) => {
+          // const UiOpt = opt+"e";
+          const toTitleCase = (text) => {
+            if (!text) return "";
+
+            return text
+              .toLowerCase()
+              .split(" ")
+              .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+              .join(" ");
+          };
+          return(           
           <option key={opt} value={opt} className="bg-[#07111d]">
-            {opt}
+            {toTitleCase(opt)}
           </option>
-        ))}
+        )})}
       </select>
       {/* Custom SVG Arrow */}
       <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500">
