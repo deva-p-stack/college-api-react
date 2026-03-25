@@ -223,7 +223,7 @@ const Home = () => {
               No Institutions Match
             </h3>
             <p className="text-slate-500 text-sm mt-1">
-              Try refining your filters or search keywords.
+               search keywords
             </p>
             <button
               onClick={resetData}

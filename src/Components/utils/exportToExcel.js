@@ -1,23 +1,30 @@
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 
+//  each word first letter capital letter 
+const toTitleCase = (text) => {
+  if (!text) return "";
+  return text
+    .toLowerCase()
+    .split(" ")
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+};
+
 export const exportToExcel = (data, fileName = "Filtered_Colleges") => {
   if (!data || data.length === 0) {
     alert("No data to export");
     return;
   }
 
-
-  const cleanedData = data.map((college) => ({
-    Name: college.institute_name,
-    District: college.district,
-    State: college.state,
-    Type: college.institution_type,
-    University: college.university,
-    Address: college.address
-    
-  
-  }));
+const cleanedData = data.map((college) => ({
+  Name: toTitleCase(college.institute_name),
+  District: toTitleCase(college.district),
+  State: toTitleCase(college.state),
+  Type: toTitleCase(college.institution_type),
+  University: toTitleCase(college.university),
+  Address: toTitleCase(college.address),
+}));
 // create a excel sheet 
   const worksheet = XLSX.utils.json_to_sheet(cleanedData);
 

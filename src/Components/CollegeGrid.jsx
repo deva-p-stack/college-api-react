@@ -1,5 +1,6 @@
 import CollegeCard from "./CollegeCard";
 import FilterStatus from "./FilterStatus";
+import nowsearch from '../assets/qw.png';
 
 // Loading
 function Loading({ progress }) {
@@ -43,12 +44,13 @@ const CollegeGrid = ({ loading, progress, selections, filteredColleges }) => {
           </OuterLayout>
         ) : selections.state === "" && selections.search === "" ? (
           <OuterLayout>
-            <p className="text-white">Now you can search 🔍...</p>
+            <img src={nowsearch}  className="w-80 h-80 mb-10" alt="search" />
           </OuterLayout>
         ) : filteredColleges.length > 0 ? (
           <>
             <FilterStatus filteredColleges={filteredColleges} />
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 py-4">
+               
               {filteredColleges.map((college, id) => (
                 <CollegeCard key={id} college={college} />
               ))}

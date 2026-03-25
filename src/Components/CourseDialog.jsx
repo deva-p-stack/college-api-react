@@ -17,6 +17,8 @@ const CourseDialog = () => {
     }
   }, [isDialogOpen]);
 
+
+
   return (
     <dialog
       ref={dialogRef}
@@ -44,8 +46,9 @@ const CourseDialog = () => {
       </button>
 
       <h2 className="text-xl font-bold text-slate-100 mb-4 flex items-center gap-2">
-        <span className="text-sky-400">Available</span> Courses
-      </h2>
+  <span className="text-sky-400">Available</span> Courses
+  <span>({courseArr?.length || 0})</span>
+</h2>
 
       {/* Table container */}
       <div className="relative overflow-x-auto border border-white/10 rounded-xl">
@@ -61,14 +64,20 @@ const CourseDialog = () => {
           <tbody className="divide-y divide-white/5">
             {courseArr && courseArr.length > 0 ? (
               courseArr.map((course, index) => (
+
+                
                 <tr
                   key={index}
                   className="hover:bg-white/5 transition-colors duration-150">
                   <td className="px-6 py-4 font-medium text-slate-100 whitespace-normal min-w-[200px]">
                     {course.course}
                   </td>
-                  <td className="px-6 py-4">{course.level}</td>
-                  <td className="px-6 py-4">{course.programme}</td>
+                        <td className="px-6 py-4">
+                          {course.level?.toLowerCase().includes("under") && "UG"}
+                          {course.level?.toLowerCase().includes("post") && "PG"}
+                          {course.level?.toLowerCase().includes("diploma") && "DIPLOMA"}
+                        </td>     
+             <td className="px-6 py-4">{course.programme}</td>
                   <td className="px-6 py-4">
                     <span className="px-2 py-1 rounded-md bg-sky-500/10 text-sky-400 text-xs border border-sky-500/20">
                       {course.availability || "Full Time"}
