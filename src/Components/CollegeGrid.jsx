@@ -1,6 +1,6 @@
 import CollegeCard from "./CollegeCard";
 import FilterStatus from "./FilterStatus";
-import nowsearch from '../assets/qw.png';
+import nowsearch from '../assets/1.jpg';
 
 // Loading
 function Loading({ progress }) {
@@ -44,7 +44,7 @@ const CollegeGrid = ({ loading, progress, selections, filteredColleges }) => {
           </OuterLayout>
         ) : selections.state === "" && selections.search === "" ? (
           <OuterLayout>
-            <img src={nowsearch}  className="w-80 h-80 mb-10" alt="search" />
+            <img src={nowsearch}  className="w-full h-full mb-10" alt="search" />
           </OuterLayout>
         ) : filteredColleges.length > 0 ? (
           <>
