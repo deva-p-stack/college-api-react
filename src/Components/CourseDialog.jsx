@@ -45,8 +45,8 @@ const CourseDialog = () => {
         </svg>
       </button>
 
-      <h2 className="text-xl font-bold text-slate-100 mb-4 flex items-center gap-2">
-  <span className="text-sky-400">Available</span> Courses
+      <h2 className="text-xl font-bold text-sky-400 mb-4 flex items-center gap-2">
+  <span className="text-slate-100">Available</span> Courses
   <span>({courseArr?.length || 0})</span>
 </h2>
 
@@ -72,10 +72,13 @@ const CourseDialog = () => {
                   <td className="px-6 py-4 font-medium text-slate-100 whitespace-normal min-w-[200px]">
                     {course.course}
                   </td>
-                        <td className="px-6 py-4">
+                        <td className="px-6 py-4 ">
+                          <span className="px-2 py-1 rounded-md bg-sky-500/10 text-sky-400 text-xs border border-sky-500/20">
                           {course.level?.toLowerCase().includes("under") && "UG"}
                           {course.level?.toLowerCase().includes("post") && "PG"}
                           {course.level?.toLowerCase().includes("diploma") && "DIPLOMA"}
+                          
+                          </span>
                         </td>     
              <td className="px-6 py-4">{course.programme}</td>
                   <td className="px-6 py-4">

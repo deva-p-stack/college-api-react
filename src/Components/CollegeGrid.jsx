@@ -44,7 +44,14 @@ const CollegeGrid = ({ loading, progress, selections, filteredColleges }) => {
           </OuterLayout>
         ) : selections.state === "" && selections.search === "" ? (
           <OuterLayout>
-            <img src={nowsearch}  className="w-full h-full mb-10" alt="search" />
+            <img
+              src={nowsearch}
+              className="w-100 h-auto brightness-70 saturate-50"
+              alt=""
+            />
+            <p className="text-blue-200 font-light">
+              Now you can filter & search Colleges...
+            </p>
           </OuterLayout>
         ) : filteredColleges.length > 0 ? (
           <>
